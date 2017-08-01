@@ -2,10 +2,7 @@ package main.java.net.proselyte.Practice.Developer;
 
 import java.io.*;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Scanner;
 import java.util.NoSuchElementException;
-
 
 public class DeveloperDAO {
 
@@ -64,40 +61,76 @@ public class DeveloperDAO {
 
     public void update(Developer developer) {
         File file = new File("developer.txt");
-        String id = Integer.toString(developer.getId());
+        String idToString = Integer.toString(developer.getId());
+        ArrayList<String> developersList = new ArrayList<>();
+        ArrayList<String> changedDeveloper = new ArrayList<>();
         boolean IDExists = false;
-
-        // Checking if file exists and if true searching ID duplicates
+        // Checking if file exists and if true searching of ID
         if (file.exists()) {
-            // Search of ID duplicates
+            // Searching of ID
             try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
                 String line;
                 String[] developerData;
 
                 while ((line = reader.readLine()) != null) {
                     developerData = line.split(",");
-                    if (developerData[0].equals(id)) {
-                        System.out.println("==========================================================================");
-                        System.out.println("Developer with ID " + id + " is already exists. Please, choose another ID.");
-                        System.out.println("==========================================================================");
-                        System.out.println();
+                    if (developerData[0].equals(idToString)) {
                         IDExists = true;
-                        break;
+
+                        developerData[0] = Integer.toString(developer.getId());
+                        developerData[1] = developer.getName();
+                        developerData[2] = developer.getSurname();
+                        developerData[3] = developer.getSpecialization();
+                        developerData[4] = Integer.toString(developer.getExperience());
+                        developerData[5] = Integer.toString(developer.getSalary());
+
+                        String str = developerData[0] + "," +
+                                developerData[1] + "," +
+                                developerData[2] + "," +
+                                developerData[3] + "," +
+                                developerData[4] + "," +
+                                developerData[5];
+                        System.out.println("Done!");
+                        changedDeveloper.add(str);
+                        for (String s : changedDeveloper)
+                            System.out.println(s);
+                    }
+                    if (!developerData[0].equals(idToString)) {
+                        developersList.add(line);
                     }
                 }
             } catch (FileNotFoundException e) {
                 System.out.println("File not found, sorry..." + e);
             } catch (NoSuchElementException e) {
-                System.out.println("There is no developer with id: " + id + ": " + e);
+                System.out.println("There is no developer with id: " + idToString + ": " + e);
             } catch (IOException e) {
                 e.printStackTrace();
             }
-        }
-        // End of searching of ID duplicates
-        if(!IDExists) {
+        } else
+            System.out.println("File not found.");
+        // End of searching of ID
 
-        }
+        // If ID exists
+        if (IDExists) {
+            file.delete();
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath, true))) {
 
+                for (String s : developersList) {
+                        writer.write(s);
+                        writer.newLine();
+                    }
+                for (String s : changedDeveloper) {
+                    writer.write(s);
+                    writer.newLine();
+                }
+                writer.flush();
+                writer.close();
+            } catch (IOException e) {
+                System.out.println("I can't to save file " + filePath + ", sorry...: " + e);
+            }
+        } else {
+            System.out.println("Developer not exists. Can't update");
+        }
     }
 
     public void remove(int id) {
