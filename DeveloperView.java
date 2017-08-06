@@ -15,8 +15,8 @@ public class DeveloperView {
         String developerName;
         String developerSurname;
         String developerSpecialization;
-        Integer developerExperience = 0;
-        Integer developerSalary = 0;
+        Integer developerExperience;
+        Integer developerSalary;
         Developer developer;
 
         try {
@@ -78,6 +78,7 @@ public class DeveloperView {
 
                         developer = new Developer(developerId, developerName, developerSurname, developerSpecialization, developerExperience, developerSalary);
                         developerController.save(developer);
+                        developer = null; // Let the GC doing it's work
                         System.out.println("Developer created!");
                         System.out.println();
                         break;
@@ -125,6 +126,7 @@ public class DeveloperView {
                         System.out.println();
 
                         developerController.update(developer);
+                        developer = null;
                         System.out.println("Developer updated!");
                         System.out.println();
                         break;
